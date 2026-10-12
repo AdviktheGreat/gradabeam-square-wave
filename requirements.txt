@@ -1,0 +1,8 @@
+# Client side only. The Enformer/Borzoi models run on Modal GPUs (see squarewave/oracle_server.py).
+# Versions below are the ones the reported results were produced with (Python 3.13).
+numpy==2.5.4
+scipy==1.18.1
+torch==2.14.1
+xxhash==3.8.1
+modal==1.5.4
+matplotlib==3.11.2

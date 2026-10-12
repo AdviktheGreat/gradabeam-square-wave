@@ -1,0 +1,19 @@
+Unclosed connection: Channel('input-plane.us-east.modal.com', 443, ..., path=None)
+[ubeam K'=2 K=15 s0] chunk 1/153 scored 30 best partial loss 2.38 wall 6s ~$0.01
+[ubeam K'=2 K=15 s0] chunk 11/153 scored 330 best partial loss 15.57 wall 58s ~$0.08
+[ubeam K'=2 K=15 s0] chunk 21/153 scored 630 best partial loss 20.26 wall 104s ~$0.14
+[ubeam K'=2 K=15 s0] chunk 31/153 scored 930 best partial loss 29.61 wall 155s ~$0.21
+[ubeam K'=2 K=15 s0] chunk 41/153 scored 1230 best partial loss 43.49 wall 204s ~$0.27
+[ubeam K'=2 K=15 s0] chunk 51/153 scored 1530 best partial loss 46.91 wall 261s ~$0.34
+[ubeam K'=2 K=15 s0] chunk 61/153 scored 1830 best partial loss 67.21 wall 306s ~$0.40
+[ubeam K'=2 K=15 s0] chunk 71/153 scored 2130 best partial loss 78.05 wall 356s ~$0.47
+[ubeam K'=2 K=15 s0] chunk 81/153 scored 2430 best partial loss 87.28 wall 410s ~$0.53
+[ubeam K'=2 K=15 s0] chunk 91/153 scored 2730 best partial loss 103.88 wall 470s ~$0.59
+[ubeam K'=2 K=15 s0] chunk 101/153 scored 3030 best partial loss 105.17 wall 519s ~$0.66
+[ubeam K'=2 K=15 s0] chunk 111/153 scored 3330 best partial loss 122.73 wall 601s ~$0.72
+[ubeam K'=2 K=15 s0] chunk 121/153 scored 3630 best partial loss 138.70 wall 698s ~$0.78
+[ubeam K'=2 K=15 s0] chunk 131/153 scored 3930 best partial loss 142.82 wall 763s ~$0.85
+[ubeam K'=2 K=15 s0] chunk 141/153 scored 4230 best partial loss 166.60 wall 831s ~$0.91
+[ubeam K'=2 K=15 s0] chunk 151/153 scored 4530 best partial loss 171.37 wall 910s ~$0.98
+[ubeam K'=2 K=15 s0] chunk 153/153 scored 4590 best partial loss 171.74 wall 928s ~$0.99
+[ubeam_kp2_k15_s0] done: final loss 171.74 scored 4590

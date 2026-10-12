@@ -1,0 +1,30 @@
+{
+ "seed": 101,
+ "budget_fe": 3000.0,
+ "name": "pilot2_H_b4_r8_a0.1",
+ "beam_size": 4,
+ "rollouts": 8,
+ "mut_rate": 200.0,
+ "alpha": 0.1,
+ "max_rollout_len": 200,
+ "no_pbt": false,
+ "milestone_fe": 250.0,
+ "pythonhashseed": "101",
+ "design_bp": 19584,
+ "finished": "budget",
+ "steps": 66,
+ "fe": 2999.2,
+ "n_fwd": 2428,
+ "n_grad": 272,
+ "n_bad_grad": 0,
+ "grad_loss_scales": {
+  "64.0": 272
+ },
+ "best_loss": 168.3467674255371,
+ "wall_s": 978.8435969352722,
+ "gpu_s": {
+  "enformer": 167.10185289382935,
+  "borzoi": 462.1737196445465
+ },
+ "usd_estimate": 0.690455142090718
+}

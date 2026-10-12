@@ -1,0 +1,12 @@
+Unclosed connection: Channel('input-plane.us-east.modal.com', 443, ..., path=None)
+[pilot_rate2] steps 6 fe 145/2000 (fwd 116, grad 14) best loss 191.41 wall 61s ~$0.04
+[pilot_rate2] steps 19 fe 346/2000 (fwd 262, grad 40) best loss 181.09 wall 122s ~$0.08
+[pilot_rate2] steps 34 fe 548/2000 (fwd 401, grad 70) best loss 177.79 wall 183s ~$0.13
+[pilot_rate2] steps 50 fe 761/2000 (fwd 547, grad 102) best loss 177.47 wall 247s ~$0.18
+[pilot_rate2] steps 65 fe 962/2000 (fwd 685, grad 132) best loss 175.08 wall 309s ~$0.22
+[pilot_rate2] steps 80 fe 1163/2000 (fwd 823, grad 162) best loss 175.08 wall 370s ~$0.27
+[pilot_rate2] steps 94 fe 1360/2000 (fwd 961, grad 190) best loss 175.08 wall 430s ~$0.31
+[pilot_rate2] steps 110 fe 1571/2000 (fwd 1105, grad 222) best loss 174.14 wall 493s ~$0.36
+[pilot_rate2] steps 125 fe 1767/2000 (fwd 1238, grad 252) best loss 173.46 wall 553s ~$0.41
+[pilot_rate2] steps 140 fe 1972/2000 (fwd 1380, grad 282) best loss 173.46 wall 616s ~$0.45
+[pilot_rate2] done: fe 2000 best loss 173.43 wall 623s

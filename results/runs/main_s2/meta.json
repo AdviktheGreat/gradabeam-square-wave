@@ -1,0 +1,30 @@
+{
+ "seed": 2,
+ "budget_fe": 13000.0,
+ "name": "main_s2",
+ "beam_size": 4,
+ "rollouts": 8,
+ "mut_rate": 200.0,
+ "alpha": 0.1,
+ "max_rollout_len": 200,
+ "no_pbt": false,
+ "milestone_fe": 250.0,
+ "pythonhashseed": "2",
+ "design_bp": 19584,
+ "finished": "budget",
+ "steps": 277,
+ "fe": 12999.6,
+ "n_fwd": 10656,
+ "n_grad": 1116,
+ "n_bad_grad": 0,
+ "grad_loss_scales": {
+  "64.0": 1116
+ },
+ "best_loss": 140.03693771362305,
+ "wall_s": 5945.628682851791,
+ "gpu_s": {
+  "enformer": 725.0876376628876,
+  "borzoi": 1972.753233909607
+ },
+ "usd_estimate": 2.9601309563087095
+}

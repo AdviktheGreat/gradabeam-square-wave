@@ -1,0 +1,30 @@
+{
+ "seed": 101,
+ "budget_fe": 3000.0,
+ "name": "pilot2_E_b2_r4_a0.1",
+ "beam_size": 2,
+ "rollouts": 4,
+ "mut_rate": 200.0,
+ "alpha": 0.1,
+ "max_rollout_len": 200,
+ "no_pbt": false,
+ "milestone_fe": 250.0,
+ "pythonhashseed": "101",
+ "design_bp": 19584,
+ "finished": "budget",
+ "steps": 215,
+ "fe": 2999.4,
+ "n_fwd": 2088,
+ "n_grad": 434,
+ "n_bad_grad": 0,
+ "grad_loss_scales": {
+  "64.0": 434
+ },
+ "best_loss": 177.44704055786133,
+ "wall_s": 959.6142110824585,
+ "gpu_s": {
+  "enformer": 169.59090900421143,
+  "borzoi": 461.6868326663971
+ },
+ "usd_estimate": 0.6926519665552511
+}

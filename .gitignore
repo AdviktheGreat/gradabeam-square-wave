@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.DS_Store
+.venv/
+venv/
+
+# 52 MB, rebuilt/downloaded by fetch_flanks.py
+data/chrX.fa.gz
+
+# Evo 2 published sequences (Supplementary Data 3, CC BY-NC-ND 4.0) are not redistributed; see data/README.md
+data/published_dnase_*.txt
+
+# crash tracebacks from the pilots that hit the non-finite fp16 Borzoi gradient (fixed by loss-scale backoff)
+results/logs_failed/

@@ -1,0 +1,30 @@
+{
+ "seed": 101,
+ "budget_fe": 3000.0,
+ "name": "pilot2_G_b2_r16_m50",
+ "beam_size": 2,
+ "rollouts": 16,
+ "mut_rate": 50.0,
+ "alpha": 0.5,
+ "max_rollout_len": 200,
+ "no_pbt": false,
+ "milestone_fe": 250.0,
+ "pythonhashseed": "101",
+ "design_bp": 19584,
+ "finished": "budget",
+ "steps": 74,
+ "fe": 2999.2,
+ "n_fwd": 2680,
+ "n_grad": 152,
+ "n_bad_grad": 0,
+ "grad_loss_scales": {
+  "64.0": 152
+ },
+ "best_loss": 170.02354431152344,
+ "wall_s": 995.6332490444183,
+ "gpu_s": {
+  "enformer": 165.49089455604553,
+  "borzoi": 457.5721757411957
+ },
+ "usd_estimate": 0.6836386465761397
+}

@@ -1,0 +1,18 @@
+[ubeam K'=2 K=42 s0] chunk 1/153 scored 84 best partial loss 2.11 wall 19s ~$0.02
+[ubeam K'=2 K=42 s0] chunk 11/153 scored 924 best partial loss 9.85 wall 152s ~$0.20
+[ubeam K'=2 K=42 s0] chunk 21/153 scored 1764 best partial loss 12.04 wall 275s ~$0.38
+[ubeam K'=2 K=42 s0] chunk 31/153 scored 2604 best partial loss 24.82 wall 409s ~$0.56
+[ubeam K'=2 K=42 s0] chunk 41/153 scored 3444 best partial loss 44.62 wall 549s ~$0.74
+[ubeam K'=2 K=42 s0] chunk 51/153 scored 4284 best partial loss 45.22 wall 733s ~$0.91
+[ubeam K'=2 K=42 s0] chunk 61/153 scored 5124 best partial loss 61.08 wall 902s ~$1.09
+[ubeam K'=2 K=42 s0] chunk 71/153 scored 5964 best partial loss 66.08 wall 1062s ~$1.27
+[ubeam K'=2 K=42 s0] chunk 81/153 scored 6804 best partial loss 74.65 wall 1187s ~$1.45
+[ubeam K'=2 K=42 s0] chunk 91/153 scored 7644 best partial loss 93.13 wall 1312s ~$1.63
+[ubeam K'=2 K=42 s0] chunk 101/153 scored 8484 best partial loss 94.59 wall 1437s ~$1.81
+[ubeam K'=2 K=42 s0] chunk 111/153 scored 9324 best partial loss 110.19 wall 1562s ~$1.98
+[ubeam K'=2 K=42 s0] chunk 121/153 scored 10164 best partial loss 117.67 wall 1687s ~$2.16
+[ubeam K'=2 K=42 s0] chunk 131/153 scored 11004 best partial loss 120.91 wall 1812s ~$2.34
+[ubeam K'=2 K=42 s0] chunk 141/153 scored 11844 best partial loss 145.51 wall 1937s ~$2.52
+[ubeam K'=2 K=42 s0] chunk 151/153 scored 12684 best partial loss 151.94 wall 2086s ~$2.70
+[ubeam K'=2 K=42 s0] chunk 153/153 scored 12852 best partial loss 151.98 wall 2110s ~$2.73
+[ubeam_kp2_k42_s0] done: final loss 151.98 scored 12852

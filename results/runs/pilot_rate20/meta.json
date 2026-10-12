@@ -1,0 +1,31 @@
+{
+ "seed": 100,
+ "budget_fe": 2000.0,
+ "name": "pilot_rate20",
+ "beam_size": 2,
+ "rollouts": 4,
+ "mut_rate": 20.0,
+ "alpha": 0.5,
+ "max_rollout_len": 200,
+ "no_pbt": false,
+ "milestone_fe": 250.0,
+ "pythonhashseed": "100",
+ "design_bp": 19584,
+ "finished": "budget",
+ "steps": 143,
+ "fe": 2000.0,
+ "n_fwd": 1391,
+ "n_grad": 290,
+ "n_bad_grad": 0,
+ "grad_loss_scales": {
+  "4096.0": 4,
+  "64.0": 286
+ },
+ "best_loss": 171.89097595214844,
+ "wall_s": 625.130537033081,
+ "gpu_s": {
+  "enformer": 111.32875061035156,
+  "borzoi": 309.87429785728455
+ },
+ "usd_estimate": 0.4621533448464341
+}

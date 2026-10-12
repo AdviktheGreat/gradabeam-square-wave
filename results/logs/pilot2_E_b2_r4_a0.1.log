@@ -1,0 +1,16 @@
+[pilot2_E_b2_r4_a0.1] steps 2 fe 46/3000 (fwd 33, grad 6) best loss 189.35 wall 62s ~$0.02
+[pilot2_E_b2_r4_a0.1] steps 16 fe 264/3000 (fwd 193, grad 34) best loss 179.89 wall 127s ~$0.07
+[pilot2_E_b2_r4_a0.1] steps 31 fe 468/3000 (fwd 334, grad 64) best loss 178.31 wall 190s ~$0.11
+[pilot2_E_b2_r4_a0.1] steps 46 fe 664/3000 (fwd 467, grad 94) best loss 177.45 wall 250s ~$0.16
+[pilot2_E_b2_r4_a0.1] steps 62 fe 878/3000 (fwd 613, grad 126) best loss 177.45 wall 313s ~$0.21
+[pilot2_E_b2_r4_a0.1] steps 78 fe 1092/3000 (fwd 760, grad 158) best loss 177.45 wall 377s ~$0.26
+[pilot2_E_b2_r4_a0.1] steps 93 fe 1295/3000 (fwd 900, grad 188) best loss 177.45 wall 440s ~$0.30
+[pilot2_E_b2_r4_a0.1] steps 107 fe 1494/3000 (fwd 1040, grad 216) best loss 177.45 wall 500s ~$0.35
+[pilot2_E_b2_r4_a0.1] steps 122 fe 1703/3000 (fwd 1186, grad 246) best loss 177.45 wall 563s ~$0.40
+[pilot2_E_b2_r4_a0.1] steps 137 fe 1907/3000 (fwd 1327, grad 276) best loss 177.45 wall 624s ~$0.44
+[pilot2_E_b2_r4_a0.1] steps 151 fe 2109/3000 (fwd 1471, grad 304) best loss 177.45 wall 685s ~$0.49
+[pilot2_E_b2_r4_a0.1] steps 166 fe 2311/3000 (fwd 1610, grad 334) best loss 177.45 wall 747s ~$0.53
+[pilot2_E_b2_r4_a0.1] steps 181 fe 2517/3000 (fwd 1753, grad 364) best loss 177.45 wall 807s ~$0.58
+[pilot2_E_b2_r4_a0.1] steps 195 fe 2717/3000 (fwd 1894, grad 392) best loss 177.45 wall 869s ~$0.63
+[pilot2_E_b2_r4_a0.1] steps 209 fe 2908/3000 (fwd 2026, grad 420) best loss 177.45 wall 931s ~$0.67
+[pilot2_E_b2_r4_a0.1] done: fe 2999 best loss 177.45 wall 960s

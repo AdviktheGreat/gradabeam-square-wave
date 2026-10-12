@@ -1,0 +1,30 @@
+{
+ "seed": 0,
+ "budget_fe": 13000.0,
+ "name": "main_s0",
+ "beam_size": 4,
+ "rollouts": 8,
+ "mut_rate": 200.0,
+ "alpha": 0.1,
+ "max_rollout_len": 200,
+ "no_pbt": false,
+ "milestone_fe": 250.0,
+ "pythonhashseed": "0",
+ "design_bp": 19584,
+ "finished": "budget",
+ "steps": 274,
+ "fe": 12999.4,
+ "n_fwd": 10681,
+ "n_grad": 1104,
+ "n_bad_grad": 0,
+ "grad_loss_scales": {
+  "64.0": 1104
+ },
+ "best_loss": 145.02933502197266,
+ "wall_s": 5889.794977903366,
+ "gpu_s": {
+  "enformer": 720.1259174346924,
+  "borzoi": 1975.9296321868896
+ },
+ "usd_estimate": 2.9581720613903473
+}

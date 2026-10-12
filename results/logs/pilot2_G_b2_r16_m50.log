@@ -1,0 +1,16 @@
+Unclosed connection: Channel('input-plane.us-east.modal.com', 443, ..., path=None)
+[pilot2_G_b2_r16_m50] steps 1 fe 108/3000 (fwd 100, grad 4) best loss 192.67 wall 84s ~$0.03
+[pilot2_G_b2_r16_m50] steps 4 fe 305/3000 (fwd 284, grad 10) best loss 185.12 wall 145s ~$0.07
+[pilot2_G_b2_r16_m50] steps 9 fe 519/3000 (fwd 477, grad 20) best loss 181.70 wall 213s ~$0.12
+[pilot2_G_b2_r16_m50] steps 14 fe 711/3000 (fwd 648, grad 30) best loss 179.68 wall 274s ~$0.17
+[pilot2_G_b2_r16_m50] steps 19 fe 915/3000 (fwd 831, grad 40) best loss 175.40 wall 338s ~$0.21
+[pilot2_G_b2_r16_m50] steps 25 fe 1142/3000 (fwd 1033, grad 52) best loss 174.14 wall 410s ~$0.26
+[pilot2_G_b2_r16_m50] steps 31 fe 1368/3000 (fwd 1234, grad 64) best loss 170.02 wall 481s ~$0.31
+[pilot2_G_b2_r16_m50] steps 37 fe 1595/3000 (fwd 1435, grad 76) best loss 170.02 wall 552s ~$0.37
+[pilot2_G_b2_r16_m50] steps 42 fe 1781/3000 (fwd 1600, grad 86) best loss 170.02 wall 612s ~$0.41
+[pilot2_G_b2_r16_m50] steps 48 fe 2001/3000 (fwd 1795, grad 98) best loss 170.02 wall 681s ~$0.46
+[pilot2_G_b2_r16_m50] steps 53 fe 2196/3000 (fwd 1969, grad 108) best loss 170.02 wall 744s ~$0.50
+[pilot2_G_b2_r16_m50] steps 59 fe 2418/3000 (fwd 2166, grad 120) best loss 170.02 wall 815s ~$0.55
+[pilot2_G_b2_r16_m50] steps 64 fe 2605/3000 (fwd 2332, grad 130) best loss 170.02 wall 877s ~$0.59
+[pilot2_G_b2_r16_m50] steps 69 fe 2793/3000 (fwd 2499, grad 140) best loss 170.02 wall 939s ~$0.64
+[pilot2_G_b2_r16_m50] done: fe 2999 best loss 170.02 wall 996s
