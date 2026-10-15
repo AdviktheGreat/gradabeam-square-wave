@@ -11,9 +11,16 @@ This is a small, independent reproduction. It is not affiliated with the GrAdaBe
 
 With about the same number of oracle evaluations as Evo 2's published long wave (~13k scored candidates), GrAdaBeam started from
 **uniform-random DNA** reaches loss 134 to 145 and AUROC 0.79 to 0.93 (6 runs). The published Evo 2 design scores loss 135.7 and
-AUROC 0.998 under the same oracle. GrAdaBeam matches Evo 2 on the loss in two of six runs but not on AUROC, and it is roughly level
-with a plain uniform-proposal beam search that has no gradients and no learned prior. The oracle budget is matched. Everything else
-Evo 2 had is not (see [Is the comparison fair?](#is-the-comparison-fair)), so this does not show that GrAdaBeam is generally worse than Evo 2.
+AUROC 0.998 under the same oracle. GrAdaBeam matches Evo 2 on the loss in two of six runs but not on AUROC, and from a uniform start it is roughly level
+with a plain uniform-proposal beam search that has no gradients and no learned prior.
+
+A follow-up started GrAdaBeam from a sequence sampled from an **order-5 Markov chain trained on the mouse genome** (no change to GrAdaBeam
+itself). With the library defaults, all four seeds reach loss 114.7 to 127.9, below the published design's 135.7, and AUROC 0.87 to 0.98
+(mean 0.94), still below Evo 2's 0.998. Three of four runs also kept genome-like sequence statistics. See
+[Follow-up: Markov-o5 start](#follow-up-markov-o5-start).
+
+The oracle budget is matched. Everything else Evo 2 had is not (see [Is the comparison fair?](#is-the-comparison-fair)), so this does not show
+that GrAdaBeam is generally worse or better than Evo 2.
 
 ## Results
 
@@ -58,6 +65,55 @@ GrAdaBeam edited a random sequence until the oracles saw a wave. The result does
 DNA. Held-out-track AUROC stays close to the optimised-track AUROC, so the designs are not just overfitting the two optimised
 tracks, but the held-out tracks are other ES DNase experiments and are strongly correlated with the optimised ones.
 
+## Follow-up: Markov-o5 start
+
+The first pass started from uniform-random DNA. This follow-up asks whether a start with genome-like local statistics helps. GrAdaBeam is
+used unmodified: the start sequence is sampled from an order-5 Markov chain and everything else (default settings, 13k fe, seeds 0 to 3) stays the same.
+
+**The chain.** Each base depends on the previous 5. It was trained on mm39 chr1 to chr19 (2.40 billion 6-mers, forward strand, repeats
+included, N-containing k-mers skipped). chrX is left out so the designed locus is not in the training data (the chain has only 3,072 free parameters,
+so it could not memorise a locus anyway). Samples are 19,584 bp, seeded with the last 5 bp of the native upstream flank. They have GC 0.42,
+CpG observed/expected about 0.19 and a dinucleotide distance to native mm39 of 0.06 to 0.07 (uniform random DNA: GC 0.50, CpG 1.0, distance 0.25).
+The chain knows nothing about the target wave. Its starts score like uniform random ones: loss 193.7 to 195.6 and AUROC 0.46 to 0.64, against 193.6 to 196.0 and 0.42 to 0.57.
+
+**Results at 13k fe** (all four seeds, one configuration, nothing dropped):
+
+| Run | Loss | AUROC | Held-out AUROC | ICC | Bases edited | CpG o/e | Dinuc. distance to mm39 |
+|---|---|---|---|---|---|---|---|
+| Markov start, seed 0 | 114.7 | 0.984 | 0.974 | 0.989 | 19% | 0.59 | 0.089 |
+| Markov start, seed 1 | 127.2 | 0.872 | 0.857 | 0.965 | 68% | 1.02 | 0.244 |
+| Markov start, seed 2 | 127.9 | 0.972 | 0.958 | 0.987 | 16% | 0.55 | 0.096 |
+| Markov start, seed 3 | 126.3 | 0.918 | 0.916 | 0.993 | 16% | 0.52 | 0.105 |
+| **Markov start, mean** | **124.0** | **0.936** | **0.926** | 0.984 | | | |
+| Uniform start, same config (seeds 0, 1) | 134.6, 134.1 | 0.926, 0.886 | 0.912, 0.891 | 0.96 to 0.97 | 23%, 35% | 1.04, 1.00 | 0.251, 0.258 |
+| Uniform start, tuned config (4 seeds) | 137.9 to 145.0 | 0.786 to 0.899 | 0.776 to 0.895 | 0.97 to 0.98 | 19% to 63% | 0.99 to 1.04 | about 0.25 |
+| Evo 2 published design (rescored) | 135.7 | 0.998 | 0.997 | 0.956 | n/a | 0.64 | 0.115 |
+
+![Markov start](results/markov_start.png)
+
+*Left: best loss so far. Middle: AUROC at fixed budgets (best design at each checkpoint, re-scored). Right: final AUROC against how
+genome-like the design is. Evo 2's curve in the middle panel is read by eye from the paper.*
+
+What this shows:
+
+- **Loss.** All four Markov-start runs end below all six uniform-start GrAdaBeam runs and below the published Evo 2 design. Exact one-sided
+  permutation p is 0.005 against all six uniform-start runs. That comparison mixes in the 4 runs with a different (tuned) config. Against the 2 runs
+  with the same config, the smallest possible p with these counts is 0.067, and that is what was observed.
+- **AUROC.** The mean is higher (0.936 against 0.906 for the same-config uniform runs and 0.849 for the tuned runs), but the spread across seeds
+  is wide (0.872 to 0.984). Against the 2 same-config uniform runs, p = 0.33. This arm does not establish an AUROC gain.
+  At 4,000 fe, seed 0 already had AUROC 0.947, close to Evo 2's curve (about 0.955 at 4.6k candidates). The other three had 0.76 to 0.80.
+- **Held-out tracks.** Held-out AUROC stays within about 0.015 of the optimised-track AUROC in every run, so the gain is not just overfitting
+  the two optimised tracks. Those held-out tracks are other ES DNase experiments and share most of their signal with the optimised ones.
+- **Genome-likeness.** Seeds 0, 2 and 3 edited only 16% to 19% of bases and kept CpG depletion (0.52 to 0.59, Evo 2: 0.64), a dinucleotide
+  distance of 0.09 to 0.10 (Evo 2: 0.115), and a GC content that is higher in open than in closed segments (0.45 against 0.43), a weaker version of
+  Evo 2's 0.49 against 0.37. Seed 1 edited 68% of bases, drifted to uniform-like statistics, and had the lowest AUROC of the four.
+- **Why it helps is not established.** Before the runs I measured how well the oracle gradient predicts real single-base substitutions
+  (150 substitutions at each of 3 starts per arm). The Markov starts are no better: Spearman 0.53 against 0.50, sign agreement 0.68 for both. So
+  better gradients at the start do not explain the gain. Fewer edits and a preserved genome-like background may matter, but this was not tested.
+
+Cost: about $2.94 of GPU time per run by the ledger ($11.8 for the four), 69.5 minutes each with four runs in parallel, plus about $0.5 for the
+start checks and evaluation. Reproduce with `launch_markov.sh` after `fetch_autosomes.sh` and `train_markov.py`.
+
 ## Setup
 
 - **Region.** mm39 chrX:52,051,929-52,123,468. The native upstream and downstream flanks are fixed. Design length 19,584 bp, the
@@ -73,7 +129,7 @@ tracks, but the held-out tracks are other ES DNase experiments and are strongly 
 - **Budget unit.** Forward-equivalents. One scored candidate is 1 fe and one gradient is 2.1 fe, the measured H100 time ratio. Evo 2's
   long wave is 153 chunks x K'=2 x K=42 = 12,852 scored candidates. The GrAdaBeam runs use 13,000 fe, which is about 9.2k to 10.7k
   scored candidates plus 1.1k to 1.8k gradients.
-- **Start.** Uniform-random ACGT per seed. The start sequences were not made easier.
+- **Start.** Uniform-random ACGT per seed in the first pass, and not made easier. The follow-up uses an order-5 Markov start instead (see above).
 - **GrAdaBeam.** The unmodified [`move37-labs/gradabeam`](https://github.com/move37-labs/gradabeam) at commit `1115891`,
   driven from Python. `PYTHONHASHSEED` is set to the seed because GrAdaBeam breaks ties through set iteration.
 - **Tuning.** Two short pilots on seeds 100 and 101 (never reused for the main runs): mutations per sequence at 2k fe, then 8
@@ -95,9 +151,12 @@ The oracle budget is matched. Evo 2 also had advantages that GrAdaBeam did not:
 
 GrAdaBeam had oracle gradients (charged at 2.1 fe) and only a small amount of tuning.
 
-The most defensible reading: GrAdaBeam is about level with a no-prior uniform beam search under this oracle and budget, and the gap
-to Evo 2's AUROC is likely mostly Evo 2's prior. With 2 to 6 seeds per arm and a wide spread between seeds (AUROC 0.79 to 0.90
-within the tuned arm), small differences between GrAdaBeam variants should not be read as real.
+The most defensible reading: from a uniform start, GrAdaBeam is about level with a no-prior uniform beam search under this oracle and budget, and the gap
+to Evo 2's AUROC is likely mostly Evo 2's prior. The Markov-o5 follow-up supports that: giving GrAdaBeam a cheap, genome-trained prior (CPU minutes,
+no learned long-range structure) lowers its loss below the published design and moves its AUROC up toward Evo 2's, though not to it. With 2 to 6 seeds per arm and a wide spread between seeds (AUROC 0.79 to 0.90
+within the uniform-start tuned arm, 0.87 to 0.98 in the Markov arm), small differences between GrAdaBeam variants should not be read as real.
+
+The Markov follow-up was run after seeing the first-pass results, with one configuration and the seeds fixed in advance (0 to 3). All four seeds are reported.
 
 ## Limits
 
@@ -105,8 +164,10 @@ within the tuned arm), small differences between GrAdaBeam variants should not b
 - The Evo 2 baseline numbers are rescores of the published sequence or values read off a figure.
 - Only the long square wave was tested, with one oracle pairing and 13k fe. It was not run with more budget, so the claim is limited
   to this budget.
+- GrAdaBeam optimised directly on the scoring oracle used here. Evo 2's design was produced with the paper's pipeline (Flashzoi-based Borzoi) and is
+  only rescored here, which favours GrAdaBeam on loss. The AUROC gap to Evo 2 (0.87 to 0.98 against 0.998) is not affected by that in the same way, but it is still measured on this oracle.
 - Evo 2's own run was not reproduced. No wet-lab data.
-- Modal cost for the whole project was roughly $50 (an estimate from the GPU-time ledger, not an invoice).
+- Modal cost for the first pass was roughly $50, and the Markov follow-up added about $12 by the GPU-time ledger (estimates, not invoices).
 
 ## Reproduce
 
@@ -125,6 +186,12 @@ export MODAL_ENVIRONMENT=<env>    # same env as the deploy; leave unset for the 
 # one run: 13k fe, default GrAdaBeam settings
 PYTHONHASHSEED=0 PYTHONPATH=.:$GRADABEAM_PATH python run_gradabeam.py --seed 0 --budget-fe 13000 --name my_run --beam-size 2 --rollouts 4 --mut-rate 2.0 --alpha 0.5
 ./launch_main.sh                  # all main runs (GRADABEAM_PATH must be set); also launch_ubeam.sh, launch_pilot*.sh
+
+# Markov-o5 start: download chr1-19 (~750 MB), train the chain (a minute on a laptop), run 4 seeds
+sh fetch_autosomes.sh && PYTHONPATH=. python train_markov.py
+./launch_markov.sh                # or: run_gradabeam.py ... --start markov
+PYTHONPATH=.:$GRADABEAM_PATH python analyze_runs.py markov_default_s0 markov_default_s1 markov_default_s2 markov_default_s3 --out results/analysis_markov.json
+python make_markov_figure.py
 PYTHONPATH=. python analyze_runs.py main_s0 main_s1 --fe 500 1000 2000 4000 8000 13000
 modal app stop gradabeam-squarewave ${MODAL_ENVIRONMENT:+-e $MODAL_ENVIRONMENT}   # when done
 ```
@@ -138,7 +205,8 @@ published long wave, which is not redistributed here (see [`data/README.md`](dat
 - `squarewave/remote.py`, `gb_oracle.py`: threaded client with retry and a GPU-time ledger; GrAdaBeam oracle (`get_tism` is first-order loss differences).
 - `squarewave/scoring.py`, `metrics.py`, `evaluate.py`: the paper's metrics (loss, AUROC, ICC), held-out-track AUROC and sequence statistics, in plain numpy.
 - `run_gradabeam.py`, `uniform_beam.py`, `launch_*.sh`: GrAdaBeam runs and the uniform-proposal control.
-- `analyze_runs.py`, `baselines.py`, `eval_ubeam.py`, `make_figure.py`: analysis and figures.
+- `squarewave/markov.py`, `train_markov.py`, `fetch_autosomes.sh`, `launch_markov.sh`, `markov_start_check.py`: the order-5 Markov start (training, sampling, start and gradient checks, runs).
+- `analyze_runs.py`, `baselines.py`, `eval_ubeam.py`, `make_figure.py`, `make_markov_figure.py`: analysis and figures.
 - `phase1_*.py`, `phase2_*.py`: oracle validation (proto-tools check, latency, gradient check).
 - `results/`: per-run traces, milestone designs and best sequences (`runs/`), control runs (`uniform_beam/`), analysis JSON, figures, logs.
 

@@ -12,3 +12,6 @@ data/published_dnase_*.txt
 
 # crash tracebacks from the pilots that hit the non-finite fp16 Borzoi gradient (fixed by loss-scale backoff)
 results/logs_failed/
+
+# order-5 Markov training data (downloaded by fetch_autosomes.sh)
+data/mm39_autosomes/

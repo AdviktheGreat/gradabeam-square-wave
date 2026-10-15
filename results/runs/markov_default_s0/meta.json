@@ -1,0 +1,31 @@
+{
+ "seed": 0,
+ "budget_fe": 13000.0,
+ "name": "markov_default_s0",
+ "beam_size": 2,
+ "rollouts": 4,
+ "mut_rate": 2.0,
+ "alpha": 0.5,
+ "max_rollout_len": 200,
+ "no_pbt": false,
+ "milestone_fe": 250.0,
+ "start": "markov",
+ "pythonhashseed": "0",
+ "design_bp": 19584,
+ "finished": "budget",
+ "steps": 892,
+ "fe": 12999.7,
+ "n_fwd": 9247,
+ "n_grad": 1787,
+ "n_bad_grad": 0,
+ "grad_loss_scales": {
+  "64.0": 1787
+ },
+ "best_loss": 114.68930053710938,
+ "wall_s": 4163.870204210281,
+ "gpu_s": {
+  "enformer": 707.6376276016235,
+  "borzoi": 1971.2763900756836
+ },
+ "usd_estimate": 2.9393639916181566
+}

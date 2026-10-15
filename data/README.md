@@ -4,6 +4,8 @@
 |---|---|---|
 | `mm39_chrX_flank_up163840.txt`, `mm39_chrX_native_region.txt`, `mm39_chrX_flank_down400000.txt` | UCSC mm39 chrX, region chrX:52,051,929-52,123,468 plus flanks. Rebuild or verify with `python fetch_flanks.py`. | yes |
 | `enformer_targets_mouse.txt`, `borzoi_targets_mouse.txt` | Track descriptions of the Enformer and Borzoi mouse heads (used to pick DNASE:129 ES-E14 and held-out ES tracks). | yes |
+| `markov_o5_mm39_autosomes.npz` | Order-5 Markov chain counts (4096 x 4) trained on mm39 chr1-19 by `train_markov.py`. | yes |
+| `mm39_autosomes/chr1..19.fa.gz` | UCSC mm39 autosome FASTAs (~750 MB), only needed to retrain the chain. Downloaded by `fetch_autosomes.sh`. | no (gitignored) |
 | `chrX.fa.gz` | UCSC mm39 chrX FASTA (52 MB). Downloaded by `fetch_flanks.py`. | no (gitignored) |
 | `published_dnase_*.txt` | Evo 2 designed sequences, Supplementary Data 3 of Brixi et al., Nature 2026. | **no** |
 

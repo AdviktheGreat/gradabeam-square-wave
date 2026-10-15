@@ -15,11 +15,25 @@ from pathlib import Path
 import numpy as np
 
 from gradabeam.gradabeam_optimizer import GradaBeam
+from squarewave import markov
+from squarewave import scoring as S
 from squarewave.gb_oracle import BudgetExhausted, SquareWaveOracle
 from squarewave.remote import BASES, RemoteOracle
 
 DESIGN_BP = 19_584  # the published long-wave design length (SI Data 3)
 RUNS = Path(__file__).parent / "results" / "runs"
+MARKOV_MODEL = S.DATA / "markov_o5_mm39_autosomes.npz"
+
+
+def make_start(kind: str, seed: int) -> str:
+    """Start sequence for a run. The same seed number gives the same RNG stream for both kinds."""
+    rng = np.random.default_rng(1000 + seed)
+    if kind == "uniform":
+        return "".join(rng.choice(list(BASES), size=DESIGN_BP))
+    # Order-5 chain trained on mm39 autosomes, seeded with the last 5 bp of the native upstream flank so the junction is natural.
+    probs = markov.load_probs(MARKOV_MODEL)
+    up, _ = S.load_flanks()
+    return markov.sample(probs, DESIGN_BP, up[-5:], rng)
 
 
 def save(out: Path, oracle: SquareWaveOracle, meta: dict) -> None:
@@ -56,11 +70,14 @@ def main() -> None:
     ap.add_argument("--max-rollout-len", type=int, default=200)
     ap.add_argument("--no-pbt", action="store_true")
     ap.add_argument("--milestone-fe", type=float, default=250.0)
+    ap.add_argument("--start", choices=["uniform", "markov"], default="uniform")
     a = ap.parse_args()
 
     meta = {**vars(a), "pythonhashseed": os.environ.get("PYTHONHASHSEED"), "design_bp": DESIGN_BP}
     out = RUNS / a.name
-    start = "".join(np.random.default_rng(1000 + a.seed).choice(list(BASES), size=DESIGN_BP))
+    start = make_start(a.start, a.seed)
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "start.txt").write_text(start)
 
     remote = RemoteOracle()
     oracle = SquareWaveOracle(remote, budget_fe=a.budget_fe, milestone_fe=a.milestone_fe)
