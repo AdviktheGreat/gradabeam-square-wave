@@ -3,9 +3,7 @@
 Follows the oracles/template.py interface of gradabeam: ``__call__`` returns the paper loss (lower is better)
 and ``get_tism`` returns first-order loss differences, which ``ModelWrapper`` negates.
 
-Budget accounting is in forward-equivalents (fe): one scored candidate is 1 fe, one gradient call is GRAD_FE.
-GRAD_FE is the measured ratio of H100 time for score_and_grad vs score on this oracle (0.45 s vs 0.21 s per call
-across both services), not the optimizer's own tism_cost of 1.0, which would understate the gradient's price.
+Budget accounting is in forward-equivalents (fe), see squarewave.budget.
 """
 
 import collections
@@ -17,13 +15,8 @@ import torch
 
 from gradabeam import tism
 from gradabeam.tism import TISMModelClass
+from squarewave.budget import GRAD_FE, BudgetExhausted
 from squarewave.remote import RemoteOracle
-
-GRAD_FE = 2.1
-
-
-class BudgetExhausted(Exception):
-    pass
 
 
 class SquareWaveOracle(TISMModelClass):

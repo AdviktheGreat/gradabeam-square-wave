@@ -1,7 +1,7 @@
-# GrAdaBeam on the Evo 2 long-square-wave design task
+# GrAdaBeam and Ledidi on the Evo 2 long-square-wave design task
 
-An independent test of [GrAdaBeam](https://github.com/move37-labs/gradabeam) on the chromatin-accessibility design task from
-Evo 2 (Brixi et al., *Nature* 2026, Fig. 6 and SI A.6): design a ~19.6 kb mouse DNA sequence whose predicted DNase
+An independent test of [GrAdaBeam](https://github.com/move37-labs/gradabeam) and, in a follow-up, [Ledidi](https://github.com/jmschrei/ledidi) on the
+chromatin-accessibility design task from Evo 2 (Brixi et al., *Nature* 2026, Fig. 6 and SI A.6): design a ~19.6 kb mouse DNA sequence whose predicted DNase
 accessibility follows a "long square wave" (1,664 bp open, 1,664 bp closed, open first), scored by the same oracle the Evo 2
 paper uses (Enformer and Borzoi).
 
@@ -19,8 +19,13 @@ itself). With the library defaults, all four seeds reach loss 114.7 to 127.9, be
 (mean 0.94), still below Evo 2's 0.998. Three of four runs also kept genome-like sequence statistics. See
 [Follow-up: Markov-o5 start](#follow-up-markov-o5-start).
 
+A second follow-up swapped the optimizer for **Ledidi** (unmodified, library defaults), started from the same four Markov sequences. All four seeds reach
+loss 46.8 to 50.3 (GrAdaBeam from the same starts: 114.7 to 127.9; Evo 2's published design: 135.7) and AUROC 0.9996 to 0.9998 (Evo 2: 0.9985), editing about 5% of
+bases and keeping genome-like composition. It passes Evo 2's loss after about 250 forward-equivalents. See
+[Follow-up: Ledidi from the Markov start](#follow-up-ledidi-from-the-markov-start).
+
 The oracle budget is matched. Everything else Evo 2 had is not (see [Is the comparison fair?](#is-the-comparison-fair)), so this does not show
-that GrAdaBeam is generally worse or better than Evo 2.
+that GrAdaBeam or Ledidi is generally worse or better than Evo 2, or that Ledidi is generally better than GrAdaBeam.
 
 ## Results
 
@@ -114,6 +119,92 @@ What this shows:
 Cost: about $2.94 of GPU time per run by the ledger ($11.8 for the four), 69.5 minutes each with four runs in parallel, plus about $0.5 for the
 start checks and evaluation. Reproduce with `launch_markov.sh` after `fetch_autosomes.sh` and `train_markov.py`.
 
+## Follow-up: Ledidi from the Markov start
+
+[Ledidi](https://github.com/jmschrei/ledidi) (Schreiber et al., bioRxiv 10.1101/2025.04.22.650035) is a different edit-design method. It learns a weight
+matrix over a template sequence, draws batches of hard one-hot samples through a Gumbel-softmax straight-through estimator, runs the frozen
+differentiable oracle on them, and minimises the oracle loss plus `l` times the number of edited positions. This follow-up uses Ledidi in place of
+GrAdaBeam and keeps everything else the same.
+
+**Setup.**
+
+- Ledidi 2.2.0 from PyPI, unmodified, with library defaults: `l=0.1`, batch 16, AdamW with lr 1.0, Gumbel temperature 1. The template is the Markov-o5 start.
+  Seeds 0 to 3 use the same four start sequences as the GrAdaBeam Markov runs (checked byte for byte), so each Ledidi run pairs with a GrAdaBeam run.
+  The oracle, loss, metrics, held-out tracks and budget accounting are the same as before.
+- The oracle is wrapped as a torch Module (`squarewave/ledidi_oracle.py`). A custom autograd Function decodes Ledidi's one-hot samples, calls the Modal app
+  once per design (4 in parallel), returns the paper loss as the model output, and returns the remote gradient as the backward pass. Ledidi's output loss is the
+  batch mean of the paper loss. On the real oracle the wrapper's losses match direct calls and its gradients match direct gradients to 1e-7.
+- Budget: 1 fe to score the template, then 386 steps x 16 designs x 2.1 fe = 12,970.6 fe (6,176 gradient calls, no non-finite gradients). `max_iter` is set from
+  the budget (Ledidi's default of 1,000 steps would need 33.6k fe) and early stopping is off, so every run spends the whole budget.
+- Which design counts: the best oracle loss over every design scored during the run, the same rule as the GrAdaBeam runs. Ledidi's own returned batch
+  (chosen by batch-mean total loss) is scored separately below.
+- Choosing `l`. The paper loss (100 to 200) is far from the scale Ledidi's default was set for, so one pilot per value was run first on seed 100, which the
+  main runs do not use (5k fe each). An edit is favoured when its first-order loss drop exceeds `l`. At the seed-0 start that holds for 1.5% of positions at
+  `l=0.1`, 21% at 0.01 and 61% at 0.001.
+
+  | `l` (pilot, seed 100, 5k fe) | Loss | AUROC | Held-out AUROC | Bases edited | Dinuc. distance to mm39 |
+  |---|---|---|---|---|---|
+  | **0.1 (library default)** | 53.6 | 1.000 | 1.000 | 4.8% | 0.072 |
+  | 0.01 | 32.8 | 1.000 | 1.000 | 15.9% | 0.119 |
+  | 0.001 | 29.0 | 1.000 | 1.000 | 26.0% | 0.204 |
+
+  The default was kept for the main runs. It is the most conservative of the three (fewest edits, most genome-like), not the one with the lowest loss.
+  Smaller `l` reached lower loss in the pilot, so the numbers below are not the lowest loss Ledidi can reach here.
+
+**Results at 13k fe** (all four seeds, one configuration, nothing dropped):
+
+| Run | Loss | AUROC | Held-out AUROC | ICC | Bases edited | CpG o/e | Dinuc. distance to mm39 |
+|---|---|---|---|---|---|---|---|
+| Ledidi, Markov start, seed 0 | 47.8 | 0.9996 | 0.9996 | 0.998 | 5.4% | 0.28 | 0.078 |
+| Ledidi, Markov start, seed 1 | 48.3 | 0.9998 | 0.9995 | 0.998 | 5.0% | 0.29 | 0.081 |
+| Ledidi, Markov start, seed 2 | 46.8 | 0.9998 | 0.9998 | 0.998 | 5.6% | 0.28 | 0.088 |
+| Ledidi, Markov start, seed 3 | 50.3 | 0.9997 | 0.9997 | 0.997 | 5.6% | 0.28 | 0.089 |
+| **Ledidi, mean** | **48.3** | **0.9998** | **0.9996** | 0.998 | | | |
+| GrAdaBeam, Markov start, same four starts (mean) | 124.0 | 0.936 | 0.926 | 0.983 | 16% to 68% | 0.52 to 1.02 | 0.089 to 0.244 |
+| Evo 2 published design (rescored) | 135.7 | 0.9985 | 0.9969 | 0.956 | n/a | 0.64 | 0.115 |
+
+![Ledidi](results/ledidi.png)
+
+*Left: best loss so far against budget (log axis). Middle: AUROC of the best design at fixed budgets (re-scored). Right: final loss against how genome-like
+the design is, with the pilot runs for the other `l` values (one seed, 5k fe). Evo 2's curve in the middle panel is read by eye from the paper.*
+
+What this shows:
+
+- **Loss.** All four Ledidi runs end at 46.8 to 50.3, against 114.7 to 127.9 for GrAdaBeam from the same starts and 135.7 for the published Evo 2 design.
+  With 4 runs against 4, the smallest possible exact permutation p is 0.014 one-sided (0.029 two-sided), and that is what was observed.
+- **Speed.** Ledidi's best loss drops below Evo 2's 135.7 after 234 to 280 fe. GrAdaBeam from the same starts needs 7,048 to 10,372 fe. At 4,000 fe all four
+  Ledidi runs have loss 48.9 to 53.5 and AUROC 0.997 or higher. GrAdaBeam at 4,000 fe has loss 150.7 to 159.6 and AUROC 0.76 to 0.95. From 4k to 13k fe Ledidi's
+  loss improves by only 1.1 to 5.1 (13,000 fe: 46.8 to 50.3), so these runs are close to converged at this budget.
+- **AUROC.** 0.9996 to 0.9998 against Evo 2's 0.9985 and GrAdaBeam's 0.87 to 0.98 (permutation p as for loss). Both Ledidi and Evo 2 are at the ceiling of this metric,
+  so the small difference between them should not be read as meaningful. The loss gap is the informative number.
+- **Selection.** The best-over-all-scored rule is not what drives this. The batch Ledidi itself returns (16 samples, chosen by batch-mean total loss) has mean loss
+  52.8 to 56.6 across the four runs (best sample in each batch 50.1 to 54.5) and mean AUROC 0.997 to 1.000 (`results/ledidi_batch_eval.json`).
+- **Edits and genome-likeness.** Ledidi edited 5.0% to 5.6% of bases (about 1,000 to 1,100 of 19,584), against 16% to 68% for GrAdaBeam, and kept the start's local
+  statistics: CpG observed/expected 0.28 (the Markov start is about 0.19, Evo 2 is 0.64), dinucleotide distance 0.078 to 0.089 (Evo 2: 0.115), and GC higher in open
+  than in closed segments (0.45 against 0.41, Evo 2: 0.49 against 0.37). Nothing drifted toward uniform-like sequence as GrAdaBeam's seed 1 did.
+- **Held-out tracks.** Held-out AUROC is 0.9995 to 0.9998, but those tracks share both models and the cell type with the optimised ones, so they are a weak test (see Limits).
+
+What this does not show:
+
+- **Why Ledidi is better here.** No ablation was run. One hypothesis: each Ledidi step applies the oracle gradient at all 19.6k positions at once (about 1,000 edits per
+  sample, 16 samples per step, with Adam momentum), while GrAdaBeam's rollouts change about two bases per proposal, so for the same number of oracle calls Ledidi can move much
+  further. This was not tested.
+- **That Ledidi beats GrAdaBeam in general.** GrAdaBeam ran with library defaults from the Markov start (the earlier tuning pilots were done from uniform starts, and the
+  tuned configuration did not help there). This is one task, one oracle and one budget.
+- **What the Markov start contributes to Ledidi.** Ledidi was only run from the Markov start. A uniform start was not tried, so the start's role for Ledidi is unknown.
+- **That the designs work as chromatin.** They are scored by the same two models that guided Ledidi, and nothing here was tested in a wet lab. No model outside the
+  optimisation loop was used. The natural-looking composition argues against gross artefacts, but it is not a test.
+
+Notes:
+
+- Borzoi's backward pass peaks at 55.6 GB per design on an H100, so only one design fits per call. The wrapper therefore sends one design per call. A call with
+  two or three designs runs out of GPU memory, and the container then keeps that memory until it scales down (about 30 s idle), so retries against a warm container also fail.
+- `analyze_runs.py` checks that its re-score of a design matches the optimizer's own loss. The tolerance was 0.05 absolute, set for losses near 130. At losses near 47 one
+  design differed by 0.052 (0.11%), so the tolerance is now relative (0.25%). Across the 24 Ledidi designs re-scored the largest difference is 0.052. Repeat re-scores of
+  the same sequence vary by about 0.04, which is fp16 Borzoi numerics.
+- Cost: $3.02 of GPU time per run by the ledger ($12.1 for the four), about 45 minutes each with four runs in parallel, plus $3.5 for the three pilots and under $0.5 for evaluation.
+  Reproduce with `launch_ledidi_pilot.sh` and `launch_ledidi.sh` (see [Reproduce](#reproduce)). Costs are estimates from the GPU-time ledger, not invoices.
+
 ## Setup
 
 - **Region.** mm39 chrX:52,051,929-52,123,468. The native upstream and downstream flanks are fixed. Design length 19,584 bp, the
@@ -158,16 +249,25 @@ within the uniform-start tuned arm, 0.87 to 0.98 in the Markov arm), small diffe
 
 The Markov follow-up was run after seeing the first-pass results, with one configuration and the seeds fixed in advance (0 to 3). All four seeds are reported.
 
+The Ledidi follow-up has the same structure: a matched oracle budget, a cheap Markov start in place of Evo 2's 7B prior, and gradients charged at 2.1 fe. Its
+advantage over GrAdaBeam is large (loss 48 against 124), and its loss is far below Evo 2's published design. All three numbers are measured on one oracle that
+Ledidi and GrAdaBeam optimised directly and Evo 2 did not, so the loss comparison with Evo 2 favours the two gradient methods. Evo 2's design came from a generative
+model that never saw an oracle gradient, so a method that reads the gradient is a different kind of method. The comparison shows what each approach reaches on this
+oracle at this budget. It does not show which is the better generator. The `l` pilot used a separate seed (100), and the default `l` was kept for all four reported seeds.
+
 ## Limits
 
 - The Borzoi mouse replicates here are the standard models, not Flashzoi as in the paper.
 - The Evo 2 baseline numbers are rescores of the published sequence or values read off a figure.
 - Only the long square wave was tested, with one oracle pairing and 13k fe. It was not run with more budget, so the claim is limited
   to this budget.
-- GrAdaBeam optimised directly on the scoring oracle used here. Evo 2's design was produced with the paper's pipeline (Flashzoi-based Borzoi) and is
-  only rescored here, which favours GrAdaBeam on loss. The AUROC gap to Evo 2 (0.87 to 0.98 against 0.998) is not affected by that in the same way, but it is still measured on this oracle.
+- GrAdaBeam and Ledidi optimised directly on the scoring oracle used here. Evo 2's design was produced with the paper's pipeline (Flashzoi-based Borzoi) and is
+  only rescored here, which favours both on loss. The AUROC gap to Evo 2 for GrAdaBeam (0.87 to 0.98 against 0.998) is not affected by that in the same way, but it is still measured on this oracle.
+- No model outside the optimisation loop was used to score the Ledidi or GrAdaBeam designs. The held-out tracks come from the same two models and the same cell type, so they
+  test overfitting to two specific tracks, not whether the designs would hold up under a different model.
+- Ledidi was run only from the Markov start, with one `l` for the four reported seeds (the other two `l` values are single-seed 5k-fe pilots).
 - Evo 2's own run was not reproduced. No wet-lab data.
-- Modal cost for the first pass was roughly $50, and the Markov follow-up added about $12 by the GPU-time ledger (estimates, not invoices).
+- Modal cost for the first pass was roughly $50, the Markov follow-up added about $12, and the Ledidi follow-up about $16 (pilots $3.5, four runs $12.1, evaluation a few tens of cents) by the GPU-time ledger (estimates, not invoices).
 
 ## Reproduce
 
@@ -193,10 +293,20 @@ sh fetch_autosomes.sh && PYTHONPATH=. python train_markov.py
 PYTHONPATH=.:$GRADABEAM_PATH python analyze_runs.py markov_default_s0 markov_default_s1 markov_default_s2 markov_default_s3 --out results/analysis_markov.json
 python make_markov_figure.py
 PYTHONPATH=. python analyze_runs.py main_s0 main_s1 --fe 500 1000 2000 4000 8000 13000
+
+# Ledidi from the Markov start (needs the Markov model above; no GrAdaBeam checkout needed)
+pip install -r requirements-ledidi.txt
+./launch_ledidi_pilot.sh          # l pilot on seed 100, 5k fe each
+PYTHONPATH=. python analyze_runs.py ledidi_pilot_l0.1 ledidi_pilot_l0.01 ledidi_pilot_l0.001 --fe 1000 2000 5000 --out results/analysis_ledidi_pilot.json
+./launch_ledidi.sh                # 4 seeds, library defaults, 13k fe
+PYTHONPATH=. python analyze_runs.py ledidi_markov_s0 ledidi_markov_s1 ledidi_markov_s2 ledidi_markov_s3 --out results/analysis_ledidi.json
+PYTHONPATH=. python eval_ledidi_batch.py ledidi_markov_s0 ledidi_markov_s1 ledidi_markov_s2 ledidi_markov_s3
+python make_ledidi_figure.py
 modal app stop gradabeam-squarewave ${MODAL_ENVIRONMENT:+-e $MODAL_ENVIRONMENT}   # when done
 ```
 
-Each 13k-fe run took about 98 minutes of wall time and ~$3 of GPU time by the ledger. Baselines and `make_figure.py` need the Evo 2
+Each 13k-fe GrAdaBeam run took about 98 minutes of wall time (first pass; 69.5 minutes for the Markov runs) and ~$3 of GPU time by the ledger. Each Ledidi run took about
+45 minutes with four in parallel and ~$3 of GPU time. Baselines and `make_figure.py` need the Evo 2
 published long wave, which is not redistributed here (see [`data/README.md`](data/README.md)).
 
 ## Layout
@@ -206,15 +316,19 @@ published long wave, which is not redistributed here (see [`data/README.md`](dat
 - `squarewave/scoring.py`, `metrics.py`, `evaluate.py`: the paper's metrics (loss, AUROC, ICC), held-out-track AUROC and sequence statistics, in plain numpy.
 - `run_gradabeam.py`, `uniform_beam.py`, `launch_*.sh`: GrAdaBeam runs and the uniform-proposal control.
 - `squarewave/markov.py`, `train_markov.py`, `fetch_autosomes.sh`, `launch_markov.sh`, `markov_start_check.py`: the order-5 Markov start (training, sampling, start and gradient checks, runs).
-- `analyze_runs.py`, `baselines.py`, `eval_ubeam.py`, `make_figure.py`, `make_markov_figure.py`: analysis and figures.
+- `squarewave/ledidi_oracle.py`, `run_ledidi.py`, `launch_ledidi.sh`, `launch_ledidi_pilot.sh`, `requirements-ledidi.txt`: the oracle as a torch Module for Ledidi, the run script (same
+  outputs as `run_gradabeam.py`), launchers for the `l` pilot and the four main runs.
+- `squarewave/budget.py`, `starts.py`: the fe constants and the start-sequence generator shared by both run scripts.
+- `analyze_runs.py`, `baselines.py`, `eval_ubeam.py`, `eval_ledidi_batch.py`, `make_figure.py`, `make_markov_figure.py`, `make_ledidi_figure.py`: analysis and figures.
 - `phase1_*.py`, `phase2_*.py`: oracle validation (proto-tools check, latency, gradient check).
 - `results/`: per-run traces, milestone designs and best sequences (`runs/`), control runs (`uniform_beam/`), analysis JSON, figures, logs.
 
 ## Credits and licenses
 
-Code in this repo is MIT-licensed ([LICENSE](LICENSE)). GrAdaBeam is Apache-2.0 and is used unmodified. Enformer, Borzoi and Evo 2 belong to
+Code in this repo is MIT-licensed ([LICENSE](LICENSE)). GrAdaBeam and Ledidi are Apache-2.0 and are used unmodified (Ledidi 2.2.0 from PyPI). Enformer, Borzoi and Evo 2 belong to
 their authors. The Evo 2 paper is CC BY-NC-ND 4.0, which is why its sequences are not included here. Genome sequence is from UCSC mm39.
 
 - Brixi et al., *Genome modelling and design across all domains of life with Evo 2*, Nature 2026.
 - Avsec et al., Enformer, *Nature Methods* 2021. Linder et al., Borzoi, *Nature Genetics* 2025.
 - GrAdaBeam preprint and code: [move37-labs/gradabeam](https://github.com/move37-labs/gradabeam).
+- Ledidi: Schreiber et al., bioRxiv 10.1101/2025.04.22.650035; code: [jmschrei/ledidi](https://github.com/jmschrei/ledidi).

@@ -1,0 +1,31 @@
+{
+ "seed": 100,
+ "budget_fe": 5000.0,
+ "name": "ledidi_pilot_l0.001",
+ "l": 0.001,
+ "batch_size": 16,
+ "lr": 1.0,
+ "concurrency": 4,
+ "milestone_fe": 250.0,
+ "start": "markov",
+ "design_bp": 19584,
+ "max_iter": 148,
+ "ledidi_version": "2.2.0",
+ "torch": "2.14.1",
+ "finished": "budget",
+ "steps": 148,
+ "fe": 4973.8,
+ "n_fwd": 1,
+ "n_grad": 2368,
+ "n_bad_grad": 0,
+ "grad_loss_scales": {
+  "64.0": 2368
+ },
+ "best_loss": 29.032316207885742,
+ "wall_s": 811.6132879257202,
+ "gpu_s": {
+  "enformer": 289.0853521823883,
+  "borzoi": 778.4356405735016
+ },
+ "usd_estimate": 1.1713077559404903
+}

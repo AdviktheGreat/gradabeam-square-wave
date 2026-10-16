@@ -21,12 +21,13 @@ H100_USD_PER_S = 3.95 / 3600
 
 
 class RemoteOracle:
-    def __init__(self, open_bp: int = 1664, closed_bp: int = 1664, env: str = ENV):
+    def __init__(self, open_bp: int = 1664, closed_bp: int = 1664, env: str = ENV, workers: int = 2):
+        """`workers` bounds concurrent remote calls: each score/score_and_grad call uses two (Enformer and Borzoi)."""
         self.open_bp, self.closed_bp = open_bp, closed_bp
         self.enf = modal.Cls.from_name(APP_NAME, "EnformerOracle", environment_name=env)()
         self.bor = modal.Cls.from_name(APP_NAME, "BorzoiOracle", environment_name=env)()
         self._lock = threading.Lock()
-        self._pool = ThreadPoolExecutor(max_workers=2)
+        self._pool = ThreadPoolExecutor(max_workers=workers)
         self.gpu_s = {"enformer": 0.0, "borzoi": 0.0}
         self.calls = {"score": 0, "grad": 0}
 

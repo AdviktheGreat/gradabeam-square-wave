@@ -50,8 +50,10 @@ def main() -> None:
     out = []
     print("%-14s %6s %6s " % ("run", "fe", "milest") + " ".join("%10s" % k[:10] for k in KEYS))
     for (run, fe, used, loss, _), r in zip(jobs, rows):
-        assert abs(r["loss"] - loss) < 0.05, (run, fe, r["loss"], loss)  # re-score must agree with the optimizer's value
-        out.append({"run": run, "fe": fe, "milestone": used, **r})
+        # The re-score (plain scoring path) must agree with the optimizer's value (gradient path). Borzoi runs in fp16 autocast,
+        # so the two differ in the last digits; the tolerance is relative because losses range from ~30 to ~200.
+        assert abs(r["loss"] - loss) < max(0.05, 0.0025 * loss), (run, fe, r["loss"], loss)
+        out.append({"run": run, "fe": fe, "milestone": used, "optimizer_loss": loss, **r})
         print("%-14s %6d %6d " % (run, fe, used) + " ".join("%10.3f" % r[k] for k in KEYS))
     Path(a.out).write_text(json.dumps(out, indent=1))
 

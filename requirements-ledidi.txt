@@ -1,0 +1,3 @@
+# Extra client-side dependency for run_ledidi.py (jmschrei/ledidi, Apache-2.0). Same Python 3.13 environment as requirements.txt.
+-r requirements.txt
+ledidi==2.2.0

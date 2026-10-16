@@ -15,25 +15,12 @@ from pathlib import Path
 import numpy as np
 
 from gradabeam.gradabeam_optimizer import GradaBeam
-from squarewave import markov
-from squarewave import scoring as S
-from squarewave.gb_oracle import BudgetExhausted, SquareWaveOracle
-from squarewave.remote import BASES, RemoteOracle
+from squarewave.budget import BudgetExhausted
+from squarewave.gb_oracle import SquareWaveOracle
+from squarewave.remote import RemoteOracle
+from squarewave.starts import DESIGN_BP, make_start
 
-DESIGN_BP = 19_584  # the published long-wave design length (SI Data 3)
 RUNS = Path(__file__).parent / "results" / "runs"
-MARKOV_MODEL = S.DATA / "markov_o5_mm39_autosomes.npz"
-
-
-def make_start(kind: str, seed: int) -> str:
-    """Start sequence for a run. The same seed number gives the same RNG stream for both kinds."""
-    rng = np.random.default_rng(1000 + seed)
-    if kind == "uniform":
-        return "".join(rng.choice(list(BASES), size=DESIGN_BP))
-    # Order-5 chain trained on mm39 autosomes, seeded with the last 5 bp of the native upstream flank so the junction is natural.
-    probs = markov.load_probs(MARKOV_MODEL)
-    up, _ = S.load_flanks()
-    return markov.sample(probs, DESIGN_BP, up[-5:], rng)
 
 
 def save(out: Path, oracle: SquareWaveOracle, meta: dict) -> None:

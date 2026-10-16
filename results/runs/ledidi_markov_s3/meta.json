@@ -1,0 +1,31 @@
+{
+ "seed": 3,
+ "budget_fe": 13000.0,
+ "name": "ledidi_markov_s3",
+ "l": 0.1,
+ "batch_size": 16,
+ "lr": 1.0,
+ "concurrency": 4,
+ "milestone_fe": 250.0,
+ "start": "markov",
+ "design_bp": 19584,
+ "max_iter": 386,
+ "ledidi_version": "2.2.0",
+ "torch": "2.14.1",
+ "finished": "budget",
+ "steps": 386,
+ "fe": 12970.6,
+ "n_fwd": 1,
+ "n_grad": 6176,
+ "n_bad_grad": 0,
+ "grad_loss_scales": {
+  "64.0": 6176
+ },
+ "best_loss": 50.2822208404541,
+ "wall_s": 2690.493552207947,
+ "gpu_s": {
+  "enformer": 744.9217562675476,
+  "borzoi": 2010.5721125602722
+ },
+ "usd_estimate": 3.023389106074969
+}

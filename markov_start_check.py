@@ -10,9 +10,9 @@ from pathlib import Path
 import numpy as np
 from scipy.stats import spearmanr
 
-from run_gradabeam import DESIGN_BP, make_start
 from squarewave.evaluate import evaluate
 from squarewave.remote import BASES, RemoteOracle
+from squarewave.starts import DESIGN_BP, make_start
 
 N_SUBS = 150
 CHUNK = 16

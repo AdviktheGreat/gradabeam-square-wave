@@ -1,0 +1,14 @@
+Unclosed connection: Channel('input-plane.us-east.modal.com', 443, ..., path=None)
+[ledidi_pilot_l0.1] step 6/148 fe 203/5000 best loss 169.31 batch mean 176.8 min 169.3 edits 953 wall 65s ~$0.05
+[ledidi_pilot_l0.1] step 17/148 fe 572/5000 best loss 87.34 batch mean 91.1 min 87.3 edits 1144 wall 128s ~$0.14
+[ledidi_pilot_l0.1] step 29/148 fe 975/5000 best loss 77.44 batch mean 80.3 min 78.1 edits 960 wall 191s ~$0.23
+[ledidi_pilot_l0.1] step 41/148 fe 1379/5000 best loss 70.53 batch mean 74.4 min 71.4 edits 895 wall 253s ~$0.33
+[ledidi_pilot_l0.1] step 53/148 fe 1782/5000 best loss 68.05 batch mean 71.2 min 68.1 edits 845 wall 316s ~$0.42
+[ledidi_pilot_l0.1] step 65/148 fe 2185/5000 best loss 65.27 batch mean 67.9 min 65.3 edits 834 wall 380s ~$0.52
+[ledidi_pilot_l0.1] step 77/148 fe 2588/5000 best loss 58.66 batch mean 62.9 min 60.1 edits 836 wall 444s ~$0.61
+[ledidi_pilot_l0.1] step 89/148 fe 2991/5000 best loss 57.03 batch mean 60.4 min 58.0 edits 857 wall 507s ~$0.70
+[ledidi_pilot_l0.1] step 101/148 fe 3395/5000 best loss 57.03 batch mean 60.8 min 58.3 edits 862 wall 570s ~$0.80
+[ledidi_pilot_l0.1] step 113/148 fe 3798/5000 best loss 56.29 batch mean 60.3 min 56.3 edits 886 wall 632s ~$0.89
+[ledidi_pilot_l0.1] step 124/148 fe 4167/5000 best loss 55.88 batch mean 61.4 min 59.5 edits 867 wall 692s ~$0.98
+[ledidi_pilot_l0.1] step 136/148 fe 4571/5000 best loss 54.66 batch mean 57.9 min 55.3 edits 920 wall 754s ~$1.07
+[ledidi_pilot_l0.1] done: fe 4974 best loss 53.60 wall 813s
